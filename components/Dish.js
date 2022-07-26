@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 const Dish = (props) => {
   dish = props.dish
-  console.log(dish)
   return (
     <View style={styles.item}>
       <View style={styles.itemLeft}>

@@ -1,3 +1,4 @@
+import { Button } from "@rneui/themed";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -16,6 +17,15 @@ export default function App() {
   const [price, setPrice] = useState("");
   const [nPeople, setNPeople] = useState("");
   const [dishItems, setDishItems] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  const clearAll = () => {
+    setDish("");
+    setPrice(null);
+    setNPeople(null);
+    setDishItems([]);
+    setTotal(0);
+  };
 
   const handleAddDish = () => {
     Keyboard.dismiss();
@@ -23,15 +33,19 @@ export default function App() {
       name: dish,
       averagePrice: parseInt(price) / parseInt(nPeople),
     };
+
+    setTotal(total + parseInt(price) / parseInt(nPeople));
     setDishItems([...dishItems, detailedDish]);
     setDish("");
     setPrice("");
     setNPeople("");
   };
 
-  const completeDish = (index) => {
+  const deleteDish = (index) => {
     let itemsCopy = [...dishItems];
+    deletedItemPrice = itemsCopy[index].averagePrice;
     itemsCopy.splice(index, 1);
+    setTotal(total - deletedItemPrice);
     setDishItems(itemsCopy);
   };
 
@@ -49,10 +63,7 @@ export default function App() {
             {/* This is where the dishs will go! */}
             {dishItems.map((item, index) => {
               return (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => completeDish(index)}
-                >
+                <TouchableOpacity key={index} onPress={() => deleteDish(index)}>
                   <Dish dish={item} />
                 </TouchableOpacity>
               );
@@ -60,6 +71,8 @@ export default function App() {
           </View>
         </View>
       </ScrollView>
+
+      <Button onPress={clearAll} title="Clear All" />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -85,20 +98,21 @@ export default function App() {
           value={nPeople}
           onChangeText={(text) => setNPeople(text)}
         />
+      </KeyboardAvoidingView>
+      <View
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.showResult}
+      >
         <TouchableOpacity
           onPress={() => handleAddDish()}
-          style={{
-            flex: 0.6,
-            alignItems: "flex-end",
-            marginRight: 20,
-            position: "relative",
-          }}
+          style={styles.addWrapper}
         >
-          <View style={styles.addWrapper}>
-            <Text style={styles.addText}>+</Text>
-          </View>
+          <Text>+</Text>
         </TouchableOpacity>
-      </KeyboardAvoidingView>
+        <View style={styles.total}>
+          <Text>Total: {total}£</Text>
+        </View>
+      </View>
     </View>
   );
 }
@@ -121,10 +135,18 @@ const styles = StyleSheet.create({
   },
   writeDishWrapper: {
     position: "absolute",
-    bottom: 30,
+    bottom: 90,
     width: "100%",
     flexDirection: "col",
     justifyContent: "space-around",
+    alignItems: "center",
+  },
+  showResult: {
+    position: "absolute",
+    bottom: 45,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
   },
   input: {
@@ -136,9 +158,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     width: 350,
   },
+  total: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: "#FFF",
+    borderRadius: 60,
+    borderColor: "#C0C0C0",
+    borderWidth: 1,
+    marginLeft: 10,
+    width: 280,
+  },
   addWrapper: {
     width: 60,
-    height: 60,
+    height: 40,
     backgroundColor: "#FFF",
     borderRadius: 60,
     justifyContent: "center",
