@@ -1,4 +1,4 @@
-import { Button } from "@rneui/themed";
+import { Button, Dialog } from "@rneui/themed";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -18,6 +18,11 @@ export default function App() {
   const [nPeople, setNPeople] = useState("");
   const [dishItems, setDishItems] = useState([]);
   const [total, setTotal] = useState(0);
+  const [visible, setVisible] = useState(false);
+
+  const toggleDialog = () => {
+    setVisible(!visible);
+  };
 
   const clearAll = () => {
     setDish("");
@@ -28,11 +33,15 @@ export default function App() {
   };
 
   const handleAddDish = () => {
+    toggleDialog();
     Keyboard.dismiss();
     const averagePrice = parseFloat(price) / parseInt(nPeople);
 
     if (isNaN(averagePrice) || !isFinite(averagePrice)) {
       alert("Please enter appropriate information!");
+      setPrice("");
+      setNPeople("");
+      setDish("");
       return;
     }
 
@@ -81,13 +90,23 @@ export default function App() {
 
       <Button onPress={clearAll} title="Clear All" />
 
-      <KeyboardAvoidingView
+      <View
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.writeDishWrapper}
+        style={styles.showResult}
       >
+        <TouchableOpacity onPress={toggleDialog} style={styles.addWrapper}>
+          <Text>+</Text>
+        </TouchableOpacity>
+        <View style={styles.total}>
+          <Text>Total: {total}£</Text>
+        </View>
+      </View>
+
+      <Dialog isVisible={visible}>
+        <Dialog.Title title="Add dish information" />
         <TextInput
           style={styles.input}
-          placeholder={"Add a dish"}
+          placeholder={"Name"}
           value={dish}
           onChangeText={(text) => setDish(text)}
         />
@@ -105,21 +124,11 @@ export default function App() {
           value={nPeople}
           onChangeText={(text) => setNPeople(text)}
         />
-      </KeyboardAvoidingView>
-      <View
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.showResult}
-      >
-        <TouchableOpacity
-          onPress={() => handleAddDish()}
-          style={styles.addWrapper}
-        >
-          <Text>+</Text>
-        </TouchableOpacity>
-        <View style={styles.total}>
-          <Text>Total: {total}£</Text>
+        <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+          <Dialog.Button title="COMFIRM" onPress={handleAddDish} />
+          <Dialog.Button title="CANCEL" onPress={toggleDialog} />
         </View>
-      </View>
+      </Dialog>
     </View>
   );
 }
@@ -157,13 +166,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
+    margin: 5,
     paddingVertical: 10,
     paddingHorizontal: 15,
     backgroundColor: "#FFF",
     borderRadius: 60,
     borderColor: "#C0C0C0",
     borderWidth: 1,
-    width: 350,
+    width: 250,
   },
   total: {
     alignItems: "center",
