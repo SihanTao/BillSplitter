@@ -31,9 +31,9 @@ export default function App() {
     Keyboard.dismiss();
     const averagePrice = parseInt(price) / parseInt(nPeople)
 
-    if (isNaN(averagePrice)) {
+    if (isNaN(averagePrice) || (!isFinite(averagePrice))) {
       alert('Please enter appropriate information!')
-      return
+      return;
     }
 
     const detailedDish = {
