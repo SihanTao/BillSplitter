@@ -29,7 +29,7 @@ export default function App() {
 
   const handleAddDish = () => {
     Keyboard.dismiss();
-    const averagePrice = parseInt(price) / parseInt(nPeople)
+    const averagePrice = parseFloat(price) / parseInt(nPeople)
 
     if (isNaN(averagePrice) || (!isFinite(averagePrice))) {
       alert('Please enter appropriate information!')
