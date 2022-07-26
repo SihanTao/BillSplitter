@@ -1,5 +1,5 @@
 import { Button, Dialog } from "@rneui/themed";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -13,27 +13,39 @@ import {
 import Dish from "./components/Dish";
 
 export default function App() {
+  const [confirm, setComfirm] = useState(false)
   const [dish, setDish] = useState("");
   const [price, setPrice] = useState("");
   const [nPeople, setNPeople] = useState("");
   const [dishItems, setDishItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [dishId, setDishId] = useState(1);
 
   const toggleDialog = () => {
     setVisible(!visible);
   };
 
   const clearAll = () => {
-    setDish("");
+    setDish("")
+    setComfirm(!confirm)
     setPrice(null);
     setNPeople(null);
     setDishItems([]);
     setTotal(0);
+    setDishId(1)
   };
 
-  const handleAddDish = () => {
+  useEffect(() => {
+    if (dish === "") {
+      setDish("Dish " + dishId)
+      setDishId(dishId + 1)
+    }
+  }, [confirm])
+
+  function handleAddDish() {
     toggleDialog();
+    setComfirm(!confirm)
     Keyboard.dismiss();
     const averagePrice = parseFloat(price) / parseInt(nPeople);
 
@@ -42,6 +54,7 @@ export default function App() {
       setPrice("");
       setNPeople("");
       setDish("");
+      setDishId(dishId - 1)
       return;
     }
 
@@ -124,7 +137,7 @@ export default function App() {
           value={nPeople}
           onChangeText={(text) => setNPeople(text)}
         />
-        <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
           <Dialog.Button title="COMFIRM" onPress={handleAddDish} />
           <Dialog.Button title="CANCEL" onPress={toggleDialog} />
         </View>
