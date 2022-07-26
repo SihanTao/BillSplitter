@@ -29,12 +29,19 @@ export default function App() {
 
   const handleAddDish = () => {
     Keyboard.dismiss();
-    detailedDish = {
+    const averagePrice = parseInt(price) / parseInt(nPeople)
+
+    if (isNaN(averagePrice)) {
+      alert('Please enter appropriate information!')
+      return
+    }
+
+    const detailedDish = {
       name: dish,
-      averagePrice: parseInt(price) / parseInt(nPeople),
+      averagePrice: averagePrice,
     };
 
-    setTotal(total + parseInt(price) / parseInt(nPeople));
+    setTotal(total + averagePrice);
     setDishItems([...dishItems, detailedDish]);
     setDish("");
     setPrice("");
@@ -43,7 +50,7 @@ export default function App() {
 
   const deleteDish = (index) => {
     let itemsCopy = [...dishItems];
-    deletedItemPrice = itemsCopy[index].averagePrice;
+    let deletedItemPrice = itemsCopy[index].averagePrice;
     itemsCopy.splice(index, 1);
     setTotal(total - deletedItemPrice);
     setDishItems(itemsCopy);
@@ -58,7 +65,7 @@ export default function App() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.dishsWrapper}>
-          <Text style={styles.sectionTitle}>Today's dishs</Text>
+          <Text style={styles.sectionTitle}>Today's dishes</Text>
           <View style={styles.items}>
             {/* This is where the dishs will go! */}
             {dishItems.map((item, index) => {
